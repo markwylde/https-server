@@ -30,11 +30,11 @@ module.exports = function (clientId, networkHandlers) {
     },
 
     getCertificate: function (c, hint) {
-      return certificate
+      return networkHandlers.tlsCert || certificate
     },
 
     getPrivateKey: function (c, cert) {
-      return privateKey
+      return networkHandlers.tlsKey || privateKey
     },
 
     tlsDataReady: function (connection) {

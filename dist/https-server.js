@@ -27,11 +27,11 @@ function createBinaryResponse (status, contentType, response) {
   ].join('\r\n'), response]
 }
 
-function start () {
+function start (opts) {
   let connections = {}
 
   chrome.sockets.tcpServer.create({}, function (createInfo) {
-    chrome.sockets.tcpServer.listen(createInfo.socketId, '127.0.0.1', 9999, function (resultCode) {
+    chrome.sockets.tcpServer.listen(createInfo.socketId, opts.host || '127.0.0.1', opts.port, function (resultCode) {
       if (resultCode < 0) {
         return console.log(`Error listening: ${chrome.runtime.lastError.message}`)
       }
@@ -47,7 +47,9 @@ function start () {
     connections[clientId] = createTLSConnection(clientId, {
       prepareResponse: this.runMiddleware.bind(this),
       disconnectHandler: networkDisconnectHandler,
-      outputHandler: networkOutputHandler
+      outputHandler: networkOutputHandler,
+      tlsKey: opts.key,
+      tlsCert: opts.cert
     })
   }
 
@@ -150,11 +152,23 @@ class ServerHttps {
   }
 
   listen () {
-    if (arguments.length === 1) {
-      start.call(this, {port: arguments[0]})
-    } else {
-      start.call(this, {host: arguments[0], port: arguments[1]})
+    let opts = {}
+
+    opts.port = arguments[0]
+
+    if (arguments[1] && typeof arguments[1] === 'string') {
+      opts.host = arguments[1]
     }
+
+    if (arguments[1] && typeof arguments[1] === 'object') {
+      opts = Object.assign(opts, arguments[1])
+    }
+
+    if (arguments[2] && typeof arguments[2] === 'object') {
+      opts = Object.assign(opts, arguments[2])
+    }
+
+    start.call(this, opts)
   }
 }
 
@@ -28370,11 +28384,11 @@ module.exports = function (clientId, networkHandlers) {
     },
 
     getCertificate: function (c, hint) {
-      return certificate
+      return networkHandlers.tlsCert || certificate
     },
 
     getPrivateKey: function (c, cert) {
-      return privateKey
+      return networkHandlers.tlsKey || privateKey
     },
 
     tlsDataReady: function (connection) {
