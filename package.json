@@ -8,18 +8,21 @@
     "url": "git+https://github.com/markwylde/https-server.git"
   },
   "standard": {
-    "globals": [ "chrome" ]
+    "globals": [
+      "chrome"
+    ]
   },
   "main": "index.js",
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
-    "brfs": "^1.4.0",
-    "browserify": "*",
-    "node-forge": "^0.7.3"
+    "brfs": "^2.0.2",
+    "node-forge": "^0.8.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "browserify": "^16.5.0"
+  },
   "scripts": {
     "lint": "standard",
     "build": "browserify -t brfs lib/index.js -o dist/https-server.js"

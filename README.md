@@ -25,3 +25,6 @@ https.listen(9999)
 
 ## Demo
 You can view the [https-server-demo](https://github.com/markwylde/https-server-demo) for a more advanced demo
+
+# License
+This project is licensed under the terms of the GPLv3 license.
